@@ -72,7 +72,7 @@ module.exports = {
                     error: "Cliente não cadastrado."
                 });
             }
-            // criar um DTO para n expor informações sensíveis
+            // n expor informações sensíveis
             return res.status(200).send(cliente);   
 
         } catch (error) {
@@ -85,13 +85,13 @@ module.exports = {
         try {
             const cliente = Cliente.findByPk(req.params.id);
 
-            if (req.cliente_id == cliente.id) {
+            if (req.user_id == cliente.id) {
                 await Cliente.destroy({
                     where: {id : req.params.id},
                 });
         
                 return res.status(200).send({
-                    msg: "Usuario removido com sucesso.",
+                    msg: "Removido com sucesso.",
                 });
             }
             return res.status(401).send({

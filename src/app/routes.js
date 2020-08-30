@@ -7,7 +7,7 @@ const lojaController = require('./controllers/lojaController');
 const sessionController = require('./controllers/sessionController');
 
 const authentication = require('./auth');
-//const authGerente = require('./authGerente');
+const loja = require('./models/loja');
 
 const routes = Router();
 
@@ -21,25 +21,27 @@ routes.get("/", (req, res) => {
     });
 });
 
-//routes.post('/login/cliente', sessionController.login);
 routes.post('/cadastro/cliente', clienteController.create);
+routes.post('/login/cliente', sessionController.login);
 routes.put('/cliente/:id', authentication, clienteController.update);
 routes.get("/cliente/:id", authentication, clienteController.show);
 routes.delete("/cliente/:id", authentication, clienteController.delete);
 
 
 routes.post('/cadastro/gerente', gerenteController.create);
-//routes.post('/login/gerente', sessionController.login);
-routes.get('/gerente/:id', gerenteController.show);
-routes.put("/gerente/:id", gerenteController.update);
-routes.delete('/gerente/:id', gerenteController.delete);
-// apenas gerentes tem acesso
-routes.get("/gerente/:id/clientes", clienteController.index);
+routes.post('/login/gerente', sessionController.login);
+routes.get('/gerente/:id', authentication, gerenteController.show);
+routes.put("/gerente/:id", authentication, gerenteController.update);
+routes.delete('/gerente/:id', authentication, gerenteController.delete);
+// apenas gerentes tem acesso a lista de todos os clientes
+routes.get("/gerente/:id/clientes", authentication, clienteController.index);
 
 
 routes.post('/cadastro/loja', lojaController.create);
 routes.post('/login/loja', sessionController.login);
-
+routes.get('/loja/:id', authentication, lojaController.show);
+routes.put('/loja/:id', authentication, lojaController.update);
+routes.delete('/loja/:id', authentication, lojaController.delete);
 
 
 module.exports = routes;

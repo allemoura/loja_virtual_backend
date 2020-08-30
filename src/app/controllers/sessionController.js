@@ -45,7 +45,7 @@ module.exports = {
                     break;
             }
             
-            return res.status(401).send({msg: "Loja nao cadastrada."});
+            return res.status(401).send({msg: "Usuário não cadastrado."});
 
         } catch (error) {
             return res.status(401).send({msg: "Erro: " + error});

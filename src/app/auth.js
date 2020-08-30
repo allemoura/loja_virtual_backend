@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 dotenv.config();
 
-function autenticaCliente(req, res, next) {
+function authentication(req, res, next) {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
     if (!token) return res.status(401).json({auth: false, message: 'Token não enviado.'});
@@ -17,4 +17,4 @@ function autenticaCliente(req, res, next) {
     });
 }
 
-module.exports = autenticaCliente;
+module.exports = authentication;
