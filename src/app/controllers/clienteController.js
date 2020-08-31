@@ -1,8 +1,8 @@
 const db = require('../models/index');
 const Cliente = db.Cliente;
+const Gerente = db.Gerente;
 
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -24,7 +24,7 @@ module.exports = {
             return res.status(201).json(cliente.id);
 
         } catch (error) {
-            return res.status(400).send({
+            return res.status(500).send({
                 mensagem: "Erro ao cadastrar cliente: " + error
             });
         }
@@ -35,32 +35,32 @@ module.exports = {
             const valores = req.body;
 
             if (!cliente) {
-                return res.status(400).send({error: "Cliente nao encontrado."});
+                return res.status(400).send({ error: "Cliente nao encontrado." });
             }
-            if (req.cliente_id == cliente.id) {
-                await cliente.update(valores)
+            if (req.user_id == cliente.id) {
+                await cliente.update(valores);
                 return res.status(200).send({mensagem: "Atualizado com sucesso." });
             }
-            
-            return res.status(401).send({
-                mensagem: "Permissão negada."
-            });
+            return res.status(401).send({ mensagem: "Permissão negada." });
             
         } catch (error) {
-            return res.status().send({mensagem: "Nao foi possivel atualizar: " + error});
+            return res.status(500).send({mensagem: "Nao foi possivel atualizar: " + error});
         }
     },
     async index(req, res) {
         try {
-            const cliente = await Cliente.findByPk(req.cliente_id);
-            if (!cliente) {
-                res.status(401).send({mensagem: "Cliente nao cadastrado."});
+            const gerente = await Gerente.findByPk(req.gerente_id);
+            if (!gerente) {
+                res.status(400).send({mensagem: "Gerente nao cadastrado."});
             }
-            const clientes = await Usuario.findAll();
+            if (req.user_id == gerente.id) {
+                const clientes = await Cliente.findAll();
+                return res.status(200).send(clientes); // dto
+            }
+            return res.status(401).send({msg: "Permissão negada."});
 
-            return res.status(200).send(clientes);
         } catch (error) {
-            return res.status(400).send({msg: "Clientes não encontrados: " + error});
+            return res.status(500).send({msg: "Clientes não encontrados: " + error});
         }
     },
     async show(req, res) {
@@ -68,17 +68,12 @@ module.exports = {
             const cliente = await Cliente.findByPk(req.params.id);
 
             if (!cliente) {
-                return res.status(400).send({
-                    error: "Cliente não cadastrado."
-                });
+                return res.status(400).send({ error: "Cliente não cadastrado." });
             }
-            // n expor informações sensíveis
-            return res.status(200).send(cliente);   
+            return res.status(200).send(cliente); // dto  
 
         } catch (error) {
-            return res.status(400).send({
-                msg: "Não foi possível buscar: " + error
-            });
+            return res.status(400).send({ msg: "Não foi possível buscar: " + error });
         }
     },
     async delete(req ,res) {
@@ -89,20 +84,12 @@ module.exports = {
                 await Cliente.destroy({
                     where: {id : req.params.id},
                 });
-        
-                return res.status(200).send({
-                    msg: "Removido com sucesso.",
-                });
+                return res.status(200).send({ msg: "Removido com sucesso." });
             }
-            return res.status(401).send({
-                mensagem: "Permissão negada."
-            });
+            return res.status(401).send({ mensagem: "Permissão negada." });
 
         } catch (error) {
-            return res.status(400).send({
-                msg: "Nao foi possivel remover: " + error,
-              });
+            return res.status(400).send({ msg: "Nao foi possivel remover: " + error });
         }
     },
-
 };

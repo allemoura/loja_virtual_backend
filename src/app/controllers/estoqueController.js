@@ -1,5 +1,4 @@
 const db = require('../models/index');
-const Produto = db.Produto;
 const Estoque = db.Estoque;
 
 module.exports = {
@@ -10,21 +9,19 @@ module.exports = {
                 quantidade: 0,
                 cores: [],
             });
-            return res.status(201).send();
+            return res.status(201).send(estoque.id);
 
         } catch (error) {
-            return res.status(400).send({
-                mensagem: "Erro ao iniciar estoque: " + error
-            });
+            return res.status(500).send({ mensagem: "Erro ao iniciar estoque: " + error });
         }
     },
     async index(req, res) {
         try {
-            const estoque = await Estoque.findAll();
-
-            return res.status(200).send(estoque);
+            const estoques = await Estoque.findAll();
+            return res.status(200).send(estoques);
+            
         } catch (error) {
-            return res.status(400).send({msg: "Produtos não encontrados: " + error});
+            return res.status(404).send({msg: "Produtos não encontrados: " + error});
         }
     },
    
