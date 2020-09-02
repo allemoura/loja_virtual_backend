@@ -11,14 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Gerente.belongsTo(models.Loja);
     }
   };
   Gerente.init({
     nome: DataTypes.STRING,
     email: DataTypes.STRING,
     senha: DataTypes.STRING,
-    chave: DataTypes.STRING
+    chave: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Gerente',

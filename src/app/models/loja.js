@@ -2,6 +2,7 @@
 const {
   Model
 } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Loja extends Model {
     /**
@@ -10,14 +11,19 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Loja.hasOne(models.Gerente, {
+        foreignKey: 'lojaId'
+      });
+      Loja.hasMany(models.Estoque, {
+        foreignKey: 'lojaId'
+      });
     }
   };
   Loja.init({
     nome_loja: DataTypes.STRING,
     email: DataTypes.STRING,
     senha: DataTypes.STRING,
-    endereco: DataTypes.STRING,
+    endereco: DataTypes.ARRAY(DataTypes.STRING),
     contato: DataTypes.STRING,
     ehLojaMatriz: DataTypes.BOOLEAN
   }, {

@@ -18,7 +18,7 @@ module.exports = {
                 nome_loja,
                 email,
                 senha: hashed,
-                endereco,
+                endereco: endereco,
                 contato,
                 ehLojaMatriz
             });
@@ -53,6 +53,8 @@ module.exports = {
                 return res.status(404).send({ error: "loja nao encontrada." });
             }
             if (req.user_id == loja.id) {
+                const hashed = await bcrypt.hash(valores.senha, 10);
+                valores.senha = hashed;
                 await loja.update(valores)
                 return res.status(200).send({ msg: "Atualizado com sucesso." });
             }
@@ -64,9 +66,11 @@ module.exports = {
     },
     async delete(req, res) {
         try {
-            const loja = Loja.findByPk(req.params.id);
-
-            if (req.user_id == loja.id) {
+            const loja = await Loja.findByPk(req.params.id);
+            if (!loja) {
+                return res.status(404).send({ msg: "Nenhuma loja com este ID." });
+                
+            } else if (req.user_id == loja.id) {
                 await Loja.destroy({
                     where: {id : req.params.id},
                 });

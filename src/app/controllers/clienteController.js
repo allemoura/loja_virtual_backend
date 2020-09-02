@@ -11,9 +11,13 @@ module.exports = {
     async create(req, res) {
         try {
             const {email, senha, nome, cpf, data_nasc, telefone} = req.body;
+            
+            const cliente = await Cliente.findOne({where: {email: email}});
+            if (cliente)  return res.status().send({ msg: "Email já cadastrado." });
+            
             const hashed = await bcrypt.hash(senha, 10);
 
-            const cliente = await Cliente.create({
+            const clienteAux = await Cliente.create({
                 email,
                 senha: hashed, 
                 nome,
@@ -21,12 +25,10 @@ module.exports = {
                 data_nasc,
                 telefone
             });
-            return res.status(201).json(cliente.id);
+            return res.status(201).json(clienteAux.id);
 
         } catch (error) {
-            return res.status(500).send({
-                mensagem: "Erro ao cadastrar cliente: " + error
-            });
+            return res.status(500).send({ msg: "Erro ao cadastrar cliente: " + error });
         }
     },
     async update(req, res) {
@@ -39,19 +41,19 @@ module.exports = {
             }
             if (req.user_id == cliente.id) {
                 await cliente.update(valores);
-                return res.status(200).send({mensagem: "Atualizado com sucesso." });
+                return res.status(200).send({msg: "Atualizado com sucesso." });
             }
-            return res.status(401).send({ mensagem: "Permissão negada." });
+            return res.status(401).send({ msg: "Permissão negada." });
             
         } catch (error) {
-            return res.status(500).send({mensagem: "Nao foi possivel atualizar: " + error});
+            return res.status(500).send({msg: "Nao foi possivel atualizar: " + error});
         }
     },
     async index(req, res) {
         try {
-            const gerente = await Gerente.findByPk(req.gerente_id);
+            const gerente = await Gerente.findByPk(req.params.id);
             if (!gerente) {
-                res.status(400).send({mensagem: "Gerente nao cadastrado."});
+                return res.status(400).send({msg: "Gerente nao cadastrado."});
             }
             if (req.user_id == gerente.id) {
                 const clientes = await Cliente.findAll();
@@ -78,7 +80,7 @@ module.exports = {
     },
     async delete(req ,res) {
         try {
-            const cliente = Cliente.findByPk(req.params.id);
+            const cliente = await Cliente.findByPk(req.params.id);
 
             if (req.user_id == cliente.id) {
                 await Cliente.destroy({
@@ -86,7 +88,7 @@ module.exports = {
                 });
                 return res.status(200).send({ msg: "Removido com sucesso." });
             }
-            return res.status(401).send({ mensagem: "Permissão negada." });
+            return res.status(401).send({ msg: "Permissão negada." });
 
         } catch (error) {
             return res.status(400).send({ msg: "Nao foi possivel remover: " + error });

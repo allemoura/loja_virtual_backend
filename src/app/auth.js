@@ -4,8 +4,9 @@ const jwt = require("jsonwebtoken");
 dotenv.config();
 
 function authentication(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
+    const authHeader = req.headers['authorization'];
+    const token = authHeader.split(' ')[1];
+
     if (!token) return res.status(401).json({auth: false, message: 'Token não enviado.'});
   
     jwt.verify(token, process.env.SECRET, function(err, decoded) {

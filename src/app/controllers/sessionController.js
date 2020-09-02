@@ -27,38 +27,34 @@ module.exports = {
                     if (!loja) {
                         return res.status(401).send({msg: "Email incorreto."});
                     }
-                    await checaSenha(senha, loja, res);
-                    break;
+                    return validaSenha(senha, loja, res);
                 case "gerente":
                     const gerente = await Gerente.findOne({where: {email: email}});
                     if (!gerente) {
                         return res.status(401).send({msg: "Email incorreto."});  
                     }
-                    await checaSenha(senha, gerente, res);
-                    break;
+                    return validaSenha(senha, gerente, res);
                 case "cliente":
                     const cliente = await Cliente.findOne({where: {email: email}});
                     if (!cliente) {
                         return res.status(401).send({msg: "Email incorreto."});
                     }
-                    await checaSenha(senha, cliente, res);
-                    break;
+                    return validaSenha(senha, cliente, res);
             }
-            
             return res.status(401).send({msg: "Usuário não cadastrado."});
 
         } catch (error) {
-            return res.status(401).send({msg: "Erro: " + error});
+            return res.status(500).send({msg: "Erro: " + error});
         }
     },
 };
 
-async function checaSenha(senha, usuario, res) {
+async function validaSenha(senha, usuario, res) {
+    
     const match = await bcrypt.compare(senha, usuario.senha);
         
     if (match) {
         let meuToken = jwt.sign({id: usuario.id}, process.env.SECRET, {expiresIn: '24h'});
         return res.status(200).send(meuToken);
-    }
-    return res.status(401).send({msg: "Senha incorreta"})
+    } else { return res.status(401).send({msg: "Senha incorreta"}); }
 }

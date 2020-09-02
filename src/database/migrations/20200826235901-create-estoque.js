@@ -2,11 +2,14 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Estoque', {
+    await queryInterface.createTable('Estoques', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        type: Sequelize.INTEGER
+      },
+      produto_id: {
         type: Sequelize.INTEGER
       },
       quantidade: {
@@ -19,6 +22,10 @@ module.exports = {
         type: Sequelize.ENUM,
         values: ['P', 'M', 'G', 'GG', 'ÚNICO']
       },
+      loja_Id: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -30,6 +37,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Estoque');
+    await queryInterface.dropTable('Estoques');
   }
 };
