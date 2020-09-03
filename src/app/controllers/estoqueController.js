@@ -3,7 +3,7 @@ const Estoque = db.Estoque;
 const Loja = db.Loja;
 
 module.exports = {
-    async create(req, res) {
+    async initiate(req, res) {
         try {
             const loja = await Loja.findByPk(req.params.id);
 
@@ -23,9 +23,12 @@ module.exports = {
             return res.status(500).send({ mensagem: "Erro ao iniciar estoque: " + error });
         }
     },
+    // async index(req, res) {
+    //     const produtos = await Estoque.findAll();
+    // },
     async show(req, res) {
         try {
-            const estoque = await Estoque.findByPk(req.params.estoque_id);
+            const estoque = await Estoque.findByPk(req.params.produto_id);
             return res.status(200).send(estoque);
             
         } catch (error) {

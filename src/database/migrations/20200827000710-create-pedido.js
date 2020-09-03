@@ -27,6 +27,13 @@ module.exports = {
         type: Sequelize.ENUM,
         values: ['ABERTO, EM TRANSITO, ENTREGUE']
       },
+      clienteId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {model: 'clientes', key: 'id'},
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

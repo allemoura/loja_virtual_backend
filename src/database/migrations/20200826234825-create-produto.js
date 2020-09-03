@@ -27,6 +27,13 @@ module.exports = {
       avaliacao: {
         type: Sequelize.FLOAT
       },
+      estoqueId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: { model: 'estoques', key: 'id' },
+        onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

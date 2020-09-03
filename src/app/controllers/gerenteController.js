@@ -10,6 +10,9 @@ dotenv.config();
 module.exports = {
     async create(req, res) {
         try {
+            const loja = await Loja.findByPk(req.params.loja_id);
+            if (!loja) return res.status(404).send({ msg: "Loja nao cadastrada." });
+
             const {nome, email, senha} = req.body;
 
             const gerente = await Gerente.findOne({where: {email: email}});
@@ -20,7 +23,8 @@ module.exports = {
             const gerenteAux = await Gerente.create({
                 email,
                 senha: hashed, 
-                nome
+                nome,
+                lojaId: req.params.loja_id
             });
             return res.status(201).json(gerenteAux.id);
 
@@ -54,7 +58,7 @@ module.exports = {
                 return res.status(404).send({ error: "gerente não cadastrado." });
             }
             if (req.user_id == gerente.id) {
-                return res.status(200).send(); // dto
+                return res.status(200).send(gerente); // dto
             }
             return res.status(401).send({ msg: "Permissão negada." });
 
@@ -85,7 +89,7 @@ module.exports = {
     async autorizar(req, res) {
         try {
             const loja = await Loja.findByPk(req.params.id);
-            const {valores} = req.body;
+            const {lojaId, permissao} = req.body;
 
             if (!loja) {
                 return res.status(404).send({ error: "loja não cadastrada." });
@@ -95,7 +99,7 @@ module.exports = {
                 if (!gerente) {
                     return res.status(404).send({ error: "gerente não cadastrado." });
                 }
-                await gerente.update(valores);
+                await gerente.update({loja_id: lojaId, chave: permissao});
                 return res.status(200).send({ msg: "Permissão atualizada com sucesso." });
             }
             return res.status(401).send({msg: "Permissão negada."});

@@ -4,18 +4,27 @@ const Produto = db.Produto;
 module.exports = {
     async create(req, res) {
         try {
-            // apenas o gerente pode criar
-            const {nome, descricao, categoria, preco} = req.body;
+            const gerente = await Gerente.findByPk(req.params.id);
 
-            const produto = await Produto.create({
-                nome,
-                descricao,
-                categoria,
-                preco,
-                desconto: 0,
-                avaliacao: 0.0
-            });
-            return res.status(201).json(produto.id);
+            if (!gerente) {
+                return res.status(404).send({ error: "gerente não cadastrado." });
+            }
+            if (req.user_id == gerente.id) {
+                const estoque_id = req.params.estoque_id;
+                const {nome, descricao, categoria, preco} = req.body;
+
+                const produto = await Produto.create({
+                    nome,
+                    descricao,
+                    categoria,
+                    preco,
+                    desconto: 0,
+                    avaliacao: 0.0,
+                    estoqueId: estoque_id
+                });
+                return res.status(201).json(produto.id);
+            }
+            return res.status(401).send({ msg: "Permissão negada." });
 
         } catch (error) {
             return res.status(400).send({

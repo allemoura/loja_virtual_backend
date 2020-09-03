@@ -8,6 +8,7 @@ const sessionController = require('./controllers/sessionController');
 const estoqueController = require('./controllers/estoqueController');
 
 const authentication = require('./auth');
+const produtoController = require('./controllers/produtoController');
 
 const routes = Router();
 
@@ -28,7 +29,7 @@ routes.get("/cliente/:id", authentication, clienteController.show);
 routes.delete("/cliente/:id", authentication, clienteController.delete);
 routes.get("/gerente/:id/clientes", authentication, clienteController.index);
 // GERENTE
-routes.post('/cadastro/gerente', gerenteController.create);
+routes.post('/cadastro/:loja_id/gerente', gerenteController.create);
 routes.post('/login/gerente', sessionController.login);
 routes.get('/gerente/:id', authentication, gerenteController.show);
 routes.put("/gerente/:id", authentication, gerenteController.update);
@@ -41,7 +42,9 @@ routes.get('/loja/:id', authentication, lojaController.show);
 routes.put('/loja/:id', authentication, lojaController.update);
 routes.delete('/loja/:id', authentication, lojaController.delete);
 // ESTOQUE
-routes.post('/loja/:id/estoque', authentication, estoqueController.create);
+routes.post('/loja/:id/estoque', authentication, estoqueController.initiate);
 routes.get('/loja/:id/estoque/:estoque_id', authentication, estoqueController.show);
+//routes.post('/loja/:id/:gerente_id/estoque/:estoque_id/add', authentication, estoqueController.create);
+
 
 module.exports = routes;

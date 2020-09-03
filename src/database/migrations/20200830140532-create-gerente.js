@@ -36,9 +36,10 @@ module.exports = {
       chave: {
         type: Sequelize.BOOLEAN
       },
-      loja_Id: {
+      lojaId: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: { model: 'lojas', key: 'id' }
       },
       createdAt: {
         allowNull: false,

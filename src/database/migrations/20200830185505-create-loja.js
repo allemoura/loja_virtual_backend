@@ -35,7 +35,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       endereco: {
-        type: Sequelize.ARRAY
+        type: Sequelize.ARRAY(Sequelize.STRING)
       },
       contato: {
         allowNull: false,
